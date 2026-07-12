@@ -24,7 +24,7 @@
 }
 
 .saved {
-  color: var(--pt-success);
+  color: var(--pt-text);
   animation: pop 0.3s ease;
 }
 

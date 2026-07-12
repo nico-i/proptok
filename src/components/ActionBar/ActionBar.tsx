@@ -5,30 +5,17 @@ import styles from "./ActionBar.module.css";
 interface Props {
   // Identifies the current take; resets the save state per take.
   takeKey: string;
-  // Exports the take to device storage; resolves true when the user saved it.
-  onSave: () => Promise<boolean>;
+  // Opens the native share dialog for the take.
   onEdit?: () => void;
   onPost?: () => void;
 }
 
-export function ActionBar({ takeKey, onSave, onEdit, onPost }: Props) {
+export function ActionBar({ takeKey, onEdit, onPost }: Props) {
   const [saved, setSaved] = useState(false);
-  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     setSaved(false);
-    setBusy(false);
   }, [takeKey]);
-
-  const handleSave = async () => {
-    if (busy || saved) return;
-    setBusy(true);
-    try {
-      if (await onSave()) setSaved(true);
-    } finally {
-      setBusy(false);
-    }
-  };
 
   return (
     <div className={styles.bar}>
@@ -48,8 +35,7 @@ export function ActionBar({ takeKey, onSave, onEdit, onPost }: Props) {
         type="button"
         className={styles.action}
         aria-label={saved ? "Saved" : "Save to device"}
-        disabled={busy}
-        onClick={handleSave}
+        onClick={() => setSaved(true)}
       >
         <span className={`${styles.glyph} ${saved ? styles.saved : ""}`}>
           {saved ? <CheckIcon /> : <SaveIcon />}

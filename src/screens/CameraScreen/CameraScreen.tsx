@@ -1,6 +1,6 @@
 import { useRecorder } from "../../hooks/useRecorder/useRecorder";
 import type { MediaError } from "../../lib/media";
-import { saveTakeToDevice, toTakeFile } from "../../lib/share";
+import { downloadTake, shareTake, toTakeFile } from "../../lib/share";
 import { CameraView } from "../../components/CameraView/CameraView";
 import { PlaybackView } from "../../components/PlaybackView/PlaybackView";
 import { RecordButton } from "../../components/RecordButton/RecordButton";
@@ -53,9 +53,10 @@ export function CameraScreen() {
     cycleTimer,
   } = useRecorder();
 
-  const handleSave = async () => {
-    if (!take) return false;
-    return saveTakeToDevice(toTakeFile(take.blob, take.createdAt));
+  const handleShare = async () => {
+    if (!take) return;
+    const file = toTakeFile(take.blob, take.createdAt);
+    if ((await shareTake(file)) === "unsupported") downloadTake(file);
   };
 
   if (error) {
@@ -95,7 +96,7 @@ export function CameraScreen() {
 
       {isPlayback && (
         <div className={styles.actions}>
-          <ActionBar takeKey={playbackUrl} onSave={handleSave} />
+          <ActionBar takeKey={playbackUrl} onEdit={handleShare} />
         </div>
       )}
 
