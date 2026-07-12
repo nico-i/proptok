@@ -9,11 +9,24 @@ import {
 } from "../Icon/Icon";
 import styles from "./CameraControls.module.css";
 
-// Parody TikTok recording chrome. Every control here is FAKE/cosmetic — it
-// evokes the familiar capture UI (a prop for film sets) and performs no action.
+// Parody TikTok recording chrome. Most controls here are FAKE/cosmetic — they
+// evoke the familiar capture UI (a prop for film sets) and perform no action.
+// Flip and Timer are the exceptions: they drive the real camera.
 const NOOP = () => undefined;
 
-export function CameraControls() {
+interface CameraControlsProps {
+  onFlip: () => void;
+  onTimer: () => void;
+  timerSeconds: number;
+  flipDisabled?: boolean;
+}
+
+export function CameraControls({
+  onFlip,
+  onTimer,
+  timerSeconds,
+  flipDisabled = false,
+}: CameraControlsProps) {
   return (
     <div className={styles.controls}>
       <button type="button" className={styles.music} onClick={NOOP}>
@@ -24,7 +37,12 @@ export function CameraControls() {
       </button>
 
       <div className={styles.sideTools}>
-        <button type="button" className={styles.tool} onClick={NOOP}>
+        <button
+          type="button"
+          className={styles.tool}
+          onClick={onFlip}
+          disabled={flipDisabled}
+        >
           <span className={styles.toolGlyph}>
             <FlipCameraIcon />
           </span>
@@ -42,11 +60,16 @@ export function CameraControls() {
           </span>
           Speed
         </button>
-        <button type="button" className={styles.tool} onClick={NOOP}>
+        <button
+          type="button"
+          className={styles.tool}
+          onClick={onTimer}
+          aria-pressed={timerSeconds > 0}
+        >
           <span className={styles.toolGlyph}>
             <TimerIcon />
           </span>
-          Timer
+          {timerSeconds > 0 ? `${timerSeconds}s` : "Timer"}
         </button>
       </div>
 

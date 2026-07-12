@@ -38,8 +38,20 @@ function messageFor(error: MediaError): { title: string; body: string } {
 }
 
 export function CameraScreen() {
-  const { state, stream, playbackUrl, take, error, ready, tap, dismiss } =
-    useRecorder();
+  const {
+    state,
+    stream,
+    playbackUrl,
+    take,
+    error,
+    ready,
+    timerSeconds,
+    countdown,
+    tap,
+    dismiss,
+    flipCamera,
+    cycleTimer,
+  } = useRecorder();
 
   const handleSave = async () => {
     if (!take) return false;
@@ -70,7 +82,16 @@ export function CameraScreen() {
 
       {isPlayback && <TikTokOverlay />}
 
-      {!isPlayback && <CameraControls />}
+      {!isPlayback && (
+        <CameraControls
+          onFlip={flipCamera}
+          onTimer={cycleTimer}
+          timerSeconds={timerSeconds}
+          flipDisabled={state !== "idle" || countdown !== null}
+        />
+      )}
+
+      {countdown !== null && <div className={styles.countdown}>{countdown}</div>}
 
       {isPlayback && (
         <div className={styles.actions}>

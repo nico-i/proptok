@@ -24,6 +24,19 @@
   z-index: 3;
 }
 
+.countdown {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 120px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5);
+  z-index: 4;
+  pointer-events: none;
+}
+
 .message {
   position: absolute;
   inset: 0;
