@@ -5,9 +5,9 @@ import {
   type RecordingContext,
 } from "../../lib/recordingMachine";
 import {
-  requestStream,
+  acquireStream,
+  releaseStream,
   startRecorder,
-  stopStream,
   type ActiveRecorder,
   type MediaError,
 } from "../../lib/media";
@@ -48,11 +48,8 @@ export function useRecorder(): RecorderApi {
 
   useEffect(() => {
     let cancelled = false;
-    requestStream().then((result) => {
-      if (cancelled) {
-        if (result.ok) stopStream(result.stream);
-        return;
-      }
+    acquireStream().then((result) => {
+      if (cancelled) return;
       if (result.ok) {
         streamRef.current = result.stream;
         setStream(result.stream);
@@ -62,7 +59,7 @@ export function useRecorder(): RecorderApi {
     });
     return () => {
       cancelled = true;
-      stopStream(streamRef.current);
+      releaseStream();
       streamRef.current = null;
       if (playbackUrlRef.current) URL.revokeObjectURL(playbackUrlRef.current);
     };

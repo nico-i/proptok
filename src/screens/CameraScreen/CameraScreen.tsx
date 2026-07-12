@@ -22,6 +22,11 @@ function messageFor(error: MediaError): { title: string; body: string } {
         title: "No camera found",
         body: "This device doesn't expose a camera PropTok can use.",
       };
+    case "camera-busy":
+      return {
+        title: "Camera in use",
+        body: "Another app is using the camera. Close it, then reopen PropTok.",
+      };
     case "unsupported":
       return {
         title: "Camera unavailable",

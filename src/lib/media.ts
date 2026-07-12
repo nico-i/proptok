@@ -4,6 +4,7 @@
 export type MediaError =
   | { kind: "permission-denied" }
   | { kind: "no-camera" }
+  | { kind: "camera-busy" }
   | { kind: "unsupported" }
   | { kind: "unknown"; message: string };
 
@@ -44,12 +45,53 @@ function toMediaError(err: unknown): MediaError {
       return { kind: "permission-denied" };
     if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError")
       return { kind: "no-camera" };
+    // Android Chrome throws these when the camera is still held by a
+    // previous stream that hasn't fully released yet (e.g. StrictMode remount).
+    if (err.name === "NotReadableError" || err.name === "AbortError")
+      return { kind: "camera-busy" };
   }
   return { kind: "unknown", message: err instanceof Error ? err.message : String(err) };
 }
 
 export function stopStream(stream: MediaStream | null): void {
   stream?.getTracks().forEach((track) => track.stop());
+}
+
+// Shared, refcounted camera acquisition. React 18 StrictMode mounts effects
+// twice (mount → unmount → remount); tearing the stream down and immediately
+// re-requesting races Android's camera release and yields a dead/black preview.
+// Consumers acquire a shared stream and release it; the hardware is only
+// stopped once the last consumer releases.
+type AcquireResult =
+  | { ok: true; stream: MediaStream }
+  | { ok: false; error: MediaError };
+
+let sharedStream: MediaStream | null = null;
+let inFlight: Promise<AcquireResult> | null = null;
+let refCount = 0;
+
+export async function acquireStream(): Promise<AcquireResult> {
+  refCount += 1;
+
+  if (sharedStream) return { ok: true, stream: sharedStream };
+  if (inFlight) return inFlight;
+
+  inFlight = requestStream().then((result) => {
+    inFlight = null;
+    if (result.ok) sharedStream = result.stream;
+    else refCount = Math.max(0, refCount - 1);
+    return result;
+  });
+
+  return inFlight;
+}
+
+export function releaseStream(): void {
+  refCount = Math.max(0, refCount - 1);
+  if (refCount === 0 && sharedStream) {
+    stopStream(sharedStream);
+    sharedStream = null;
+  }
 }
 
 export interface ActiveRecorder {

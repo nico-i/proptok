@@ -46,12 +46,29 @@ export function downloadTake(file: File): void {
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
-  URL.revokeObjectURL(url);
+  // Revoke on the next tick: desktop browsers process the download
+  // asynchronously and revoking synchronously cancels it silently.
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+// Desktop browsers (Chrome/Edge) expose navigator.share but route it to a
+// share UI rather than a file download, so we detect pointer-less/non-touch
+// devices and go straight to a download there.
+function prefersDirectDownload(): boolean {
+  return (
+    typeof matchMedia === "function" &&
+    matchMedia("(pointer: fine) and (hover: hover)").matches
+  );
 }
 
 // Save the take to device storage: share sheet where supported, otherwise a
 // download. Returns whether the user ended up with the file (best-effort).
 export async function saveTakeToDevice(file: File): Promise<boolean> {
+  if (prefersDirectDownload()) {
+    downloadTake(file);
+    return true;
+  }
+
   const result = await shareTake(file);
   if (result === "shared") return true;
   if (result === "cancelled" || result === "failed") return false;
