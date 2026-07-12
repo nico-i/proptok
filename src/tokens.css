@@ -1,0 +1,25 @@
+/* PropTok design tokens — the single place to configure the look.
+
+   The palette intentionally IMITATES TikTok's cyan + magenta-red-on-black
+   trade dress (it's a parody), but every value is deliberately offset from
+   TikTok's real brand hexes so it is never a one-to-one copy:
+     TikTok cyan   #25F4EE  ->  PropTok  #32E0D6
+     TikTok red    #FE2C55  ->  PropTok  #F5385F
+     TikTok black  #000000  ->  PropTok  #0A0A0D
+   Tune these freely; nothing downstream hardcodes a color. */
+:root {
+  --pt-bg: #0a0a0d; /* near-black, not pure #000 */
+  --pt-surface: rgba(255, 255, 255, 0.08);
+
+  --pt-primary: #f5385f; /* magenta-red accent — record/like */
+  --pt-primary-strong: #d92b4f;
+  --pt-secondary: #32e0d6; /* cyan accent */
+
+  --pt-text: #f4f4f6;
+  --pt-text-dim: rgba(244, 244, 246, 0.7);
+  --pt-success: #38e08a;
+  --pt-progress: #ff2b2b; /* playback position bar */
+
+  /* A grotesque/system stack in TikTok's spirit but not its proprietary type. */
+  --pt-font: "Helvetica Neue", Arial, "Segoe UI", Roboto, system-ui, sans-serif;
+}

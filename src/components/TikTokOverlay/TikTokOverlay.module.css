@@ -1,0 +1,26 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--pt-text);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  font-family: var(--pt-font);
+}
+
+.topTabs {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.tabActive {
+  color: var(--pt-text);
+  border-bottom: 2px solid var(--pt-primary);
+  padding-bottom: 2px;
+}
