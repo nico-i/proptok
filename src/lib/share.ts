@@ -50,3 +50,11 @@ export function downloadTake(file: File): void {
   // asynchronously and revoking synchronously cancels it silently.
   setTimeout(() => URL.revokeObjectURL(url), 0);
 }
+
+// Export a take: try the OS share sheet first, and fall back to a plain
+// download when sharing isn't available or the share attempt fails. A
+// user-cancelled sheet is intentional, so it does not trigger a download.
+export async function exportTake(file: File): Promise<void> {
+  const result = await shareTake(file);
+  if (result === "unsupported" || result === "failed") downloadTake(file);
+}

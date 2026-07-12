@@ -1,6 +1,6 @@
 import { useRecorder } from "../../hooks/useRecorder/useRecorder";
 import type { MediaError } from "../../lib/media";
-import { downloadTake, shareTake, toTakeFile } from "../../lib/share";
+import { exportTake, toTakeFile } from "../../lib/share";
 import { CameraView } from "../../components/CameraView/CameraView";
 import { PlaybackView } from "../../components/PlaybackView/PlaybackView";
 import { RecordButton } from "../../components/RecordButton/RecordButton";
@@ -56,7 +56,7 @@ export function CameraScreen() {
   const handleShare = async () => {
     if (!take) return;
     const file = toTakeFile(take.blob, take.createdAt);
-    if ((await shareTake(file)) === "unsupported") downloadTake(file);
+    await exportTake(file);
   };
 
   if (error) {
