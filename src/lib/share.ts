@@ -1,8 +1,8 @@
-// Export a recorded take to device storage via the Web Share API. The OS sheet
-// lets the user save to Photos/Files. Requires a user gesture. Codec-agnostic:
-// the file extension is derived from the blob's own mimeType.
-
-export type ShareResult = "shared" | "unsupported" | "cancelled" | "failed";
+// Export a recorded take to the device by downloading it. The take is stored as
+// a base64 `data:` URL, so the download is a plain anchor whose href IS that data
+// URL — no object URL to create or revoke. Codec-agnostic: the file extension is
+// derived from the take's mimeType.
+import type { Take } from "./storage";
 
 function extensionFor(mimeType: string): string {
   if (mimeType.includes("mp4")) return "mp4";
@@ -10,51 +10,16 @@ function extensionFor(mimeType: string): string {
   return "video";
 }
 
-export function toTakeFile(blob: Blob, createdAt: number): File {
-  const stamp = new Date(createdAt).toISOString().replace(/[:.]/g, "-");
-  return new File([blob], `proptok-${stamp}.${extensionFor(blob.type)}`, {
-    type: blob.type,
-  });
+export function fileNameFor(take: Take): string {
+  const stamp = new Date(take.createdAt).toISOString().replace(/[:.]/g, "-");
+  return `proptok-${stamp}.${extensionFor(take.mimeType)}`;
 }
 
-export async function shareTake(file: File): Promise<ShareResult> {
-  const nav = navigator as Navigator & {
-    canShare?: (data: ShareData) => boolean;
-  };
-  const data: ShareData = { files: [file], title: "PropTok take" };
-
-  if (!nav.share || !nav.canShare?.(data)) return "unsupported";
-
-  try {
-    await nav.share(data);
-    return "shared";
-  } catch (err) {
-    // iOS/Android report a user-dismissed sheet as an AbortError.
-    if (err instanceof DOMException && err.name === "AbortError")
-      return "cancelled";
-    return "failed";
-  }
-}
-
-// Fallback for platforms without file sharing (e.g. desktop browsers): trigger
-// a normal download so the take still lands in the user's file system.
-export function downloadTake(file: File): void {
-  const url = URL.createObjectURL(file);
+export function downloadTake(take: Take): void {
   const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = file.name;
+  anchor.href = take.dataUrl;
+  anchor.download = fileNameFor(take);
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
-  // Revoke on the next tick: desktop browsers process the download
-  // asynchronously and revoking synchronously cancels it silently.
-  setTimeout(() => URL.revokeObjectURL(url), 0);
-}
-
-// Export a take: try the OS share sheet first, and fall back to a plain
-// download when sharing isn't available or the share attempt fails. A
-// user-cancelled sheet is intentional, so it does not trigger a download.
-export async function exportTake(file: File): Promise<void> {
-  const result = await shareTake(file);
-  if (result === "unsupported" || result === "failed") downloadTake(file);
 }

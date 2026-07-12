@@ -1,10 +1,12 @@
-// IndexedDB wrapper (idb): persist takes as Blobs. Codec-agnostic — the blob's
-// own type is preserved so playback/download derive format from stored data.
+// IndexedDB wrapper (idb): persist takes as base64 data URLs. The recording is
+// read from its Blob into a `data:` URL so the stored value is self-contained —
+// it plays back and downloads directly as an anchor href without needing a live
+// object URL. Codec-agnostic: the data URL carries the blob's own mimeType.
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
 
 export interface Take {
   id: string;
-  blob: Blob;
+  dataUrl: string;
   mimeType: string;
   createdAt: number;
 }
@@ -38,10 +40,19 @@ function newId(): string {
   return crypto.randomUUID();
 }
 
+function toDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+}
+
 export async function saveTake(blob: Blob): Promise<Take> {
   const take: Take = {
     id: newId(),
-    blob,
+    dataUrl: await toDataUrl(blob),
     mimeType: blob.type,
     createdAt: Date.now(),
   };

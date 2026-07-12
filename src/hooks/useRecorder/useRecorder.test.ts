@@ -13,7 +13,12 @@ vi.mock("../../lib/media", () => ({
 }));
 
 vi.mock("../../lib/storage", () => ({
-  saveTake: vi.fn(async (blob: Blob) => ({ id: "1", blob, createdAt: 0 })),
+  saveTake: vi.fn(async () => ({
+    id: "1",
+    dataUrl: "data:video/webm;base64,dg==",
+    mimeType: "video/webm",
+    createdAt: 0,
+  })),
 }));
 
 import { switchCamera, getFacingMode, startRecorder } from "../../lib/media";
