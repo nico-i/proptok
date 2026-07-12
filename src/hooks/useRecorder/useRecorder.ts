@@ -52,10 +52,13 @@ export function useRecorder(): RecorderApi {
 
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<ActiveRecorder | null>(null);
+  const playbackUrlRef = useRef<string | null>(null);
   const busyRef = useRef(false);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const setPlayback = useCallback((url: string | null) => {
+    if (playbackUrlRef.current) URL.revokeObjectURL(playbackUrlRef.current);
+    playbackUrlRef.current = url;
     setPlaybackUrl(url);
   }, []);
 
@@ -75,6 +78,7 @@ export function useRecorder(): RecorderApi {
       releaseStream();
       streamRef.current = null;
       if (countdownRef.current) clearInterval(countdownRef.current);
+      if (playbackUrlRef.current) URL.revokeObjectURL(playbackUrlRef.current);
     };
   }, []);
 
@@ -129,7 +133,11 @@ export function useRecorder(): RecorderApi {
         .then(async (blob) => {
           const stored = await saveTake(blob); // silent backup; actors may forget
           setTake(stored);
-          setPlayback(stored.dataUrl);
+          // Play back from an object URL, not the stored base64 data URL:
+          // browsers play MediaRecorder blobs reliably via object URLs but often
+          // refuse (black screen) on large data: URLs. Base64 stays for storage
+          // and download only.
+          setPlayback(URL.createObjectURL(blob));
           dispatch("TAP");
         })
         .finally(() => {

@@ -7,7 +7,7 @@ layers:
   lib/media.ts: getUserMedia + MediaRecorder. codec detection (mp4 first for iOS, then webm). stream/recorder lifecycle + cleanup.
   lib/storage.ts: idb wrapper. saveTake/listTakes/getTake. stores base64 dataUrl (FileReader.readAsDataURL) + mimeType (codec-agnostic). NOTE: base64 to mirror whatpwacando.today; dataUrl is self-contained (plays + downloads as anchor href, no object URL lifecycle).
   lib/share.ts: downloadTake(take) — plain <a href=dataUrl download=name>.click(). No Web Share API. filename stamped from createdAt + ext from mimeType.
-  hooks/useRecorder: binds fsm<->media<->storage. auto-save on stop. playbackUrl = stored take.dataUrl (no createObjectURL/revoke). stream tracks stopped on unmount.
+  hooks/useRecorder: binds fsm<->media<->storage. auto-save on stop. playbackUrl = URL.createObjectURL(blob) (revoked on replace/unmount) — NOT the base64 dataUrl, because browsers black-screen on large data: URL video. base64 dataUrl is storage+download only. stream tracks stopped on unmount.
   screens/CameraScreen: orchestrates preview/recording/playback + error UI + New take button (playback->idle). ActionBar Edit button -> downloadTake(take) (direct download).
   components: Icon(single file, named exports), RecordButton(blink), CameraView, PlaybackView(autoplay+tap-to-play fallback + rAF-smooth red progress bar), ActionBar(edit/post + real Save->device-share->check), TikTokOverlay(playback-only parody feed chrome: "New Post" label), CameraControls(recording-only FAKE parody chrome).
   CameraControls: all cosmetic/no-op. top-center "Add sound" pill; top-right tool rail (Flip/Filters/Speed/Timer); bottom Effects (left) + Upload (right) flanking the record button.
