@@ -22,7 +22,11 @@ export function pickMimeType(): string | undefined {
   return MIME_CANDIDATES.find((t) => MediaRecorder.isTypeSupported(t));
 }
 
-export async function requestStream(): Promise<
+export type FacingMode = "environment" | "user";
+
+export async function requestStream(
+  facingMode: FacingMode = "environment",
+): Promise<
   { ok: true; stream: MediaStream } | { ok: false; error: MediaError }
 > {
   if (!navigator.mediaDevices?.getUserMedia) {
@@ -30,7 +34,7 @@ export async function requestStream(): Promise<
   }
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" },
+      video: { facingMode },
       audio: true,
     });
     return { ok: true, stream };
@@ -69,6 +73,11 @@ type AcquireResult =
 let sharedStream: MediaStream | null = null;
 let inFlight: Promise<AcquireResult> | null = null;
 let refCount = 0;
+let facingMode: FacingMode = "environment";
+
+export function getFacingMode(): FacingMode {
+  return facingMode;
+}
 
 export async function acquireStream(): Promise<AcquireResult> {
   refCount += 1;
@@ -76,7 +85,7 @@ export async function acquireStream(): Promise<AcquireResult> {
   if (sharedStream) return { ok: true, stream: sharedStream };
   if (inFlight) return inFlight;
 
-  inFlight = requestStream().then((result) => {
+  inFlight = requestStream(facingMode).then((result) => {
     inFlight = null;
     if (result.ok) sharedStream = result.stream;
     else refCount = Math.max(0, refCount - 1);
@@ -86,11 +95,26 @@ export async function acquireStream(): Promise<AcquireResult> {
   return inFlight;
 }
 
+// Flip between rear/front cameras: acquire the opposite facingMode first, then
+// tear down the old stream only once the new one is live. If acquisition fails
+// (e.g. no front camera, device busy) the current stream and facing are kept.
+export async function switchCamera(): Promise<AcquireResult> {
+  const next: FacingMode = facingMode === "environment" ? "user" : "environment";
+  const result = await requestStream(next);
+  if (!result.ok) return result;
+
+  stopStream(sharedStream);
+  sharedStream = result.stream;
+  facingMode = next;
+  return result;
+}
+
 export function releaseStream(): void {
   refCount = Math.max(0, refCount - 1);
   if (refCount === 0 && sharedStream) {
     stopStream(sharedStream);
     sharedStream = null;
+    facingMode = "environment";
   }
 }
 
