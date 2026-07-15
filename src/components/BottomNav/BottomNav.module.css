@@ -1,0 +1,59 @@
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 56px;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--pt-bg);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 20;
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  border: none;
+  background: none;
+  color: var(--pt-text-dim);
+  cursor: pointer;
+}
+
+.tab :global(svg) {
+  font-size: 27px;
+}
+
+.active {
+  color: var(--pt-text);
+}
+
+.postTab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  color: var(--pt-text);
+}
+
+.postGlyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 30px;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    var(--pt-secondary) 0%,
+    var(--pt-primary) 100%
+  );
+  font-size: 22px;
+}

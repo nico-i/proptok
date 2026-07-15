@@ -1,0 +1,18 @@
+.app {
+  position: fixed;
+  inset: 0;
+  background: var(--pt-bg);
+}
+
+.content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(56px + env(safe-area-inset-bottom));
+}
+
+.contentFull {
+  position: absolute;
+  inset: 0;
+}

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useRecorder } from "../../hooks/useRecorder/useRecorder";
 import type { MediaError } from "../../lib/media";
 import { downloadTake } from "../../lib/share";
@@ -5,7 +6,7 @@ import { CameraView } from "../../components/CameraView/CameraView";
 import { PlaybackView } from "../../components/PlaybackView/PlaybackView";
 import { RecordButton } from "../../components/RecordButton/RecordButton";
 import { CameraControls } from "../../components/CameraControls/CameraControls";
-import { RerecordIcon } from "../../components/Icon/Icon";
+import { RerecordIcon, CloseIcon } from "../../components/Icon/Icon";
 import { ActionBar } from "../../components/ActionBar/ActionBar";
 import { TikTokOverlay } from "../../components/TikTokOverlay/TikTokOverlay";
 import styles from "./CameraScreen.module.css";
@@ -74,6 +75,10 @@ export function CameraScreen() {
 
   return (
     <div className={styles.screen}>
+      <Link to="/" className={styles.close} aria-label="Back to feed">
+        <CloseIcon />
+      </Link>
+
       {isPlayback ? (
         <PlaybackView url={playbackUrl} />
       ) : (

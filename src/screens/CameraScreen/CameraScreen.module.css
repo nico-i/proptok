@@ -73,3 +73,18 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
+
+.close {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  left: 12px;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  font-size: 26px;
+  color: var(--pt-text);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}

@@ -116,3 +116,112 @@ export function MediaIcon(props: Props) {
     </svg>
   );
 }
+
+export function HomeIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 3 2 11h3v9h5v-6h4v6h5v-9h3z" />
+    </svg>
+  );
+}
+
+export function DiscoverIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm3.6 5.4-2.1 5.1-5.1 2.1 2.1-5.1zM12 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+    </svg>
+  );
+}
+
+export function InboxIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M4 4h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-6l-2 3-2-3H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm3 4v2h10V8zm0 4v2h6v-2z" />
+    </svg>
+  );
+}
+
+export function ProfileIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM3 21a9 9 0 0 1 18 0z" />
+    </svg>
+  );
+}
+
+export function PlusBoxIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M5 5h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm6 3v3H8v2h3v3h2v-3h3v-2h-3V8z" />
+    </svg>
+  );
+}
+
+export function HeartIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 21 4.3 13.3a4.9 4.9 0 0 1 0-6.9 4.9 4.9 0 0 1 6.9 0l.8.8.8-.8a4.9 4.9 0 0 1 6.9 0 4.9 4.9 0 0 1 0 6.9z" />
+    </svg>
+  );
+}
+
+export function HeartOutlineIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path
+        d="M12 21 4.3 13.3a4.9 4.9 0 0 1 0-6.9 4.9 4.9 0 0 1 6.9 0l.8.8.8-.8a4.9 4.9 0 0 1 6.9 0 4.9 4.9 0 0 1 0 6.9z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+    </svg>
+  );
+}
+
+export function CommentIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M4 3h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9l-5 4v-4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm3 5v2h10V8zm0 4v2h7v-2z" />
+    </svg>
+  );
+}
+
+export function ShareIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M14 3v4C6 8 3 13 2 19c2.5-3.5 6-5.1 12-5.1V18l8-7.5z" />
+    </svg>
+  );
+}
+
+export function BookmarkIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M6 2h12a1 1 0 0 1 1 1v19l-7-4-7 4V3a1 1 0 0 1 1-1z" />
+    </svg>
+  );
+}
+
+export function TrashIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M9 3h6l1 2h4v2H4V5h4zm-3 5h12l-1 13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1zm4 3v8h1v-8zm3 0v8h1v-8z" />
+    </svg>
+  );
+}
+
+export function UploadIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M11 8.8 7.4 12.4 6 11l6-6 6 6-1.4 1.4L13 8.8V17h-2zM5 19h14v2H5z" />
+    </svg>
+  );
+}
+
+export function CloseIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L12 13.4 5.7 19.7 4.3 18.3 10.6 12 4.3 5.7l1.4-1.4L12 10.6l6.3-6.3z" />
+    </svg>
+  );
+}
