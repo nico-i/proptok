@@ -8,13 +8,16 @@ export type MediaError =
   | { kind: "unsupported" }
   | { kind: "unknown"; message: string };
 
-// iOS Safari records mp4; Android Chrome records webm. Prefer mp4 first so iOS
-// gets a natively playable/shareable file, then fall back.
+// Codec choice is download-driven. Chrome/Android's MediaRecorder emits
+// fragmented MP4 for "video/mp4" — not QuickTime-openable, and it would be
+// mislabeled .mp4 on export. So prefer real WebM whenever it is supported.
+// iOS Safari rejects WebM entirely and only supports mp4 (which there IS a
+// genuine, QuickTime-compatible MP4), so it falls through to the mp4 candidate.
 const MIME_CANDIDATES = [
-  "video/mp4",
   "video/webm;codecs=vp9,opus",
   "video/webm;codecs=vp8,opus",
   "video/webm",
+  "video/mp4",
 ];
 
 export function pickMimeType(): string | undefined {

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   acquireStream,
   getFacingMode,
+  pickMimeType,
   releaseStream,
   switchCamera,
 } from "./media";
@@ -75,5 +76,35 @@ describe("camera facing", () => {
 
     expect(result.ok).toBe(false);
     expect(getFacingMode()).toBe("environment");
+  });
+});
+
+describe("pickMimeType codec preference", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  function stubSupport(supported: string[]) {
+    vi.stubGlobal("MediaRecorder", {
+      isTypeSupported: (t: string) => supported.includes(t),
+    });
+  }
+
+  // Chrome supports both WebM and its own fragmented-MP4. That fMP4 is not
+  // QuickTime-openable and, worse, gets mislabeled .mp4 on download, so we must
+  // prefer real WebM whenever it is available.
+  it("prefers WebM over mp4 when both are supported (Chrome)", () => {
+    stubSupport(["video/mp4", "video/webm;codecs=vp9,opus", "video/webm"]);
+    expect(pickMimeType()).toBe("video/webm;codecs=vp9,opus");
+  });
+
+  // iOS Safari does not support WebM at all; its mp4 output is genuinely
+  // QuickTime-compatible, so falling through to mp4 is correct there.
+  it("falls back to mp4 when only mp4 is supported (Safari)", () => {
+    stubSupport(["video/mp4"]);
+    expect(pickMimeType()).toBe("video/mp4");
+  });
+
+  it("returns undefined when MediaRecorder is absent", () => {
+    vi.stubGlobal("MediaRecorder", undefined);
+    expect(pickMimeType()).toBeUndefined();
   });
 });
