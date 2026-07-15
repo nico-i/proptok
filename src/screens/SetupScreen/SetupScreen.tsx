@@ -12,19 +12,43 @@ import { buildFeedVideo, type FeedVideoInput } from "../../lib/feedVideo";
 import { TrashIcon, UploadIcon } from "../../components/Icon/Icon";
 import styles from "./SetupScreen.module.css";
 
-const emptyForm: FeedVideoInput = {
+interface FormState {
+  username: string;
+  description: string;
+  soundName: string;
+  likes: string;
+  comments: string;
+  shares: string;
+  saves: string;
+}
+
+const emptyForm: FormState = {
   username: "",
   description: "",
   soundName: "",
-  likes: 0,
-  comments: 0,
-  shares: 0,
-  saves: 0,
+  likes: "",
+  comments: "",
+  shares: "",
+  saves: "",
 };
+
+// Blank count fields read as 0; buildFeedVideo clamps anything invalid.
+function toInput(form: FormState): FeedVideoInput {
+  const num = (v: string) => (v.trim() === "" ? 0 : Number(v));
+  return {
+    username: form.username,
+    description: form.description,
+    soundName: form.soundName,
+    likes: num(form.likes),
+    comments: num(form.comments),
+    shares: num(form.shares),
+    saves: num(form.saves),
+  };
+}
 
 export function SetupScreen() {
   const [videos, setVideos] = useState<FeedVideo[]>([]);
-  const [form, setForm] = useState<FeedVideoInput>(emptyForm);
+  const [form, setForm] = useState<FormState>(emptyForm);
   const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,9 +60,7 @@ export function SetupScreen() {
     refresh();
   }, []);
 
-  const setNum = (key: keyof FeedVideoInput) => (value: string) =>
-    setForm((f) => ({ ...f, [key]: Number(value) }));
-  const setText = (key: keyof FeedVideoInput) => (value: string) =>
+  const setField = (key: keyof FormState) => (value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,7 +81,7 @@ export function SetupScreen() {
           createdAt: Date.now(),
           order: videos.length,
         },
-        form,
+        toInput(form),
       );
       await saveFeedVideo(video);
       setForm(emptyForm);
@@ -108,20 +130,20 @@ export function SetupScreen() {
           className={styles.input}
           placeholder="Username (e.g. grip_dept)"
           value={form.username}
-          onChange={(e) => setText("username")(e.target.value)}
+          onChange={(e) => setField("username")(e.target.value)}
         />
         <textarea
           className={styles.input}
           placeholder="Description"
           rows={2}
           value={form.description}
-          onChange={(e) => setText("description")(e.target.value)}
+          onChange={(e) => setField("description")(e.target.value)}
         />
         <input
           className={styles.input}
           placeholder="Sound name"
           value={form.soundName}
-          onChange={(e) => setText("soundName")(e.target.value)}
+          onChange={(e) => setField("soundName")(e.target.value)}
         />
 
         <div className={styles.numbers}>
@@ -129,36 +151,40 @@ export function SetupScreen() {
             Likes
             <input
               type="number"
+              inputMode="numeric"
               min={0}
               value={form.likes}
-              onChange={(e) => setNum("likes")(e.target.value)}
+              onChange={(e) => setField("likes")(e.target.value)}
             />
           </label>
           <label className={styles.numField}>
             Comments
             <input
               type="number"
+              inputMode="numeric"
               min={0}
               value={form.comments}
-              onChange={(e) => setNum("comments")(e.target.value)}
+              onChange={(e) => setField("comments")(e.target.value)}
             />
           </label>
           <label className={styles.numField}>
             Shares
             <input
               type="number"
+              inputMode="numeric"
               min={0}
               value={form.shares}
-              onChange={(e) => setNum("shares")(e.target.value)}
+              onChange={(e) => setField("shares")(e.target.value)}
             />
           </label>
           <label className={styles.numField}>
             Saves
             <input
               type="number"
+              inputMode="numeric"
               min={0}
               value={form.saves}
-              onChange={(e) => setNum("saves")(e.target.value)}
+              onChange={(e) => setField("saves")(e.target.value)}
             />
           </label>
         </div>
