@@ -1,4 +1,0 @@
-# Single-package repo (no workspace globs); esbuild needs its postinstall to run.
-packages: []
-onlyBuiltDependencies:
-  - esbuild
