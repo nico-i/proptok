@@ -210,6 +210,14 @@ export function TrashIcon(props: Props) {
   );
 }
 
+export function DragHandleIcon(props: Props) {
+  return (
+    <svg {...base(props)}>
+      <path d="M9 5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm9 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM9 12a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm9 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM9 19a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm9 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+    </svg>
+  );
+}
+
 export function UploadIcon(props: Props) {
   return (
     <svg {...base(props)}>

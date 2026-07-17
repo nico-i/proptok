@@ -52,6 +52,21 @@ export function buildFeedVideo(
   };
 }
 
+// Extracts the editable metadata from a stored video so the setup form can be
+// repopulated for editing. The username keeps its @ prefix, which makes a
+// subsequent buildFeedVideo pass idempotent.
+export function feedVideoToInput(video: FeedVideo): FeedVideoInput {
+  return {
+    username: video.username,
+    description: video.description,
+    soundName: video.soundName,
+    likes: video.likes,
+    comments: video.comments,
+    shares: video.shares,
+    saves: video.saves,
+  };
+}
+
 // Compact display for large engagement counts, e.g. 12500 -> "12.5K".
 export function formatCount(value: number): string {
   if (value < 1000) return String(value);

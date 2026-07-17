@@ -118,6 +118,23 @@ export async function updateFeedVideo(
   return next;
 }
 
+// Rewrites the `order` field of every listed video to match the given id
+// sequence, compacting to 0..n-1 in a single transaction. Ids not found in the
+// store are skipped; videos absent from `orderedIds` keep their stale order.
+export async function reorderFeedVideos(orderedIds: string[]): Promise<void> {
+  const tx = (await db()).transaction("feed", "readwrite");
+  const store = tx.store;
+  await Promise.all(
+    orderedIds.map(async (id, index) => {
+      const existing = await store.get(id);
+      if (existing && existing.order !== index) {
+        await store.put({ ...existing, order: index });
+      }
+    }),
+  );
+  await tx.done;
+}
+
 export async function deleteFeedVideo(id: string): Promise<void> {
   await (await db()).delete("feed", id);
 }

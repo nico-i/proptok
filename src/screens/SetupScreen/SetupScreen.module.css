@@ -117,6 +117,22 @@
   opacity: 0.6;
 }
 
+.cancel {
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--pt-text);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancel:disabled {
+  opacity: 0.6;
+}
+
 .list {
   list-style: none;
   margin: 0;
@@ -133,6 +149,21 @@
   padding: 8px;
   border-radius: 8px;
   background: var(--pt-surface);
+}
+
+.dragHandle {
+  border: none;
+  background: none;
+  color: var(--pt-text-dim);
+  font-size: 22px;
+  padding: 6px;
+  cursor: grab;
+  touch-action: none;
+  flex-shrink: 0;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
 }
 
 .thumb {
@@ -160,6 +191,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.edit {
+  border: none;
+  background: none;
+  color: var(--pt-text-dim);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 6px;
 }
 
 .delete {

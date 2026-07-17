@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { buildFeedVideo, formatCount, type FeedVideoInput } from "./feedVideo";
+import {
+  buildFeedVideo,
+  feedVideoToInput,
+  formatCount,
+  type FeedVideoInput,
+} from "./feedVideo";
 
 const media = {
   id: "vid-1",
@@ -64,6 +69,28 @@ describe("buildFeedVideo", () => {
     expect(v.comments).toBe(0);
     expect(v.shares).toBe(0);
     expect(v.saves).toBe(0);
+  });
+});
+
+describe("feedVideoToInput", () => {
+  it("round-trips editable metadata, preserving the @ username", () => {
+    const v = buildFeedVideo(media, input({ username: "@dop" }));
+    const back = feedVideoToInput(v);
+    expect(back).toEqual({
+      username: "@dop",
+      description: "clapper board bit",
+      soundName: "set ambience",
+      likes: 1200,
+      comments: 34,
+      shares: 5,
+      saves: 8,
+    });
+  });
+
+  it("is idempotent through buildFeedVideo", () => {
+    const v = buildFeedVideo(media, input());
+    const again = buildFeedVideo(media, feedVideoToInput(v));
+    expect(again).toEqual(v);
   });
 });
 
